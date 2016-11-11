@@ -87,6 +87,9 @@ endif()
 	target_link_libraries(concatenate octomap octomath octovis boost_system ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
         add_executable(visualizer visualizer.cpp)
         target_link_libraries(visualizer octomap octomath octovis boost_system ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_LIBRARIES})
+        add_executable(ICP ICP.cpp)
+        target_link_libraries(ICP octomap octomath octovis boost_system ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_LIBRARIES})
+
            #ten target link łączy dopiero bilioteke z plikiem cpp, musi sie zgadzac z inkludami
 
         #add_dependencies(octomap_axample octomap octomath octovis boost_system ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})

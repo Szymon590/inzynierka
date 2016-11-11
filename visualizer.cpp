@@ -21,10 +21,16 @@
 #include <stdlib.h>
  #include <pcl/visualization/cloud_viewer.h>
 
+
+#include <pcl/registration/icp.h>
+#include <pcl/console/time.h>   // TicToc
+#include <pcl/registration/gicp.h>   //Generalized Iterative Closest Point
+#include <pcl/registration/joint_icp.h>   //Joint Iterative Closest Point
+#include <pcl/registration/icp_nl.h>   //Iterative Closest Point Non Linear
+
 using namespace std;
 using namespace octomap;
 using namespace pcl;
-
 
 
 /* Mnozenie macierzy A * B = C */        // xdd
@@ -101,10 +107,12 @@ int main (int argc, char** argv)
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_24 (new pcl::PointCloud<pcl::PointXYZ>); // PTR
   pcl::PCLPointCloud2 *cloud2_24 = new pcl::PCLPointCloud2;
   
-  
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_tr (new pcl::PointCloud<pcl::PointXYZ>); // PTR
+
+
+
   string infilename23 = "/home/szymon/Pulpit/Inż/Zdjęcia/Trasa 4/cloud00023.pcd";
   string infilename24 = "/home/szymon/Pulpit/Inż/Zdjęcia/Trasa 4/cloud00024.pcd";
-
 
 
      if(pcl::io::loadPCDFile(infilename23, *cloud2_23) == -1) //load the file
@@ -211,6 +219,7 @@ int main (int argc, char** argv)
       {0,0,0}};
   mnozenie3x3(X,Y,XY);
   mnozenie3x3(XY,Z,XYZ);
+
   double PA[4][4] = {
     {  XYZ[0][0],   XYZ[0][1],   XYZ[0][2],   tx},
     {  XYZ[1][0],   XYZ[1][1],   XYZ[1][2],   ty},
@@ -243,7 +252,7 @@ int main (int argc, char** argv)
           {cloud_24->points[i].z},
           {1}};
 
-      /* Mnozenie macierzy A * B = C */
+      /* Mnozenie macierzy A * B = C*/
       mnozeniemac(PA, P2, P1);
 
     // cout<<cloud_b.points[i].x<<"   "<<cloud_b.points[i].y<<"   "<<cloud_b.points[i].z<<endl;
@@ -265,11 +274,6 @@ int main (int argc, char** argv)
 
      // P1 = PA * [cloud_b.points[i].x , cloud_b.points[i].y , cloud_b.points[i].z , 1 ];
   }
-
-
-
-
-
 
 
 
@@ -316,6 +320,12 @@ int main (int argc, char** argv)
   viewer1.setBackgroundColor(0.05, 0.05, 0.05, 0); // Setting background to a dark grey
 //  viewer1.setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 2, "original_cloud");
 
+  float bckgr_gray_level = 0.0;  // Black
+  float txt_gray_lvl = 1.0 - bckgr_gray_level;
+
+  int v1(0);
+  int v2(1);
+
 
  // viewer2.addCoordinateSystem (1.0, "cloud", 0);
  // viewer2.setBackgroundColor(0.05, 0.05, 0.05, 0); // Setting background to a dark grey
@@ -324,10 +334,28 @@ int main (int argc, char** argv)
 
   //viewer.setPosition(800, 400); // Setting visualiser window position
 
+
+          string olp = "nowy_24.pcd";
+          ofstream f(olp.c_str(), ofstream::out);
+          f << "# .PCD v0.7" << endl
+            << "VERSION 0.7" << endl
+            << "FIELDS x y z" << endl
+            << "SIZE 4 4 4" << endl
+            << "TYPE F F F" << endl
+            << "COUNT 1 1 1" << endl
+            << "WIDTH " << cloud_24->size() << endl
+            << "HEIGHT 1" << endl
+            << "VIEWPOINT 0 0 0 0 0 0 1" << endl
+            << "POINTS " << cloud_24->size() << endl
+            << "DATA ascii" << endl;
+          for (size_t i = 0; i < cloud_24->size(); i++)
+              f << cloud_24->points[i].x << " " << cloud_24->points[i].y  << " " << cloud_24->points[i].z  << endl;
+          f.close();
+
+
   while (!viewer1.wasStopped ()) { // Display the visualiser until 'q' key is pressed
-    viewer1.spinOnce ();
-  }
+      viewer1.spinOnce ();
 
-  return 0;
+
 }
-
+}

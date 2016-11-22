@@ -105,10 +105,12 @@ endif()
         add_executable(umeyama umeyama.cpp)
         target_link_libraries(umeyama octomap octomath octovis boost_system ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_LIBRARIES})
         add_executable(graber graber.cpp)
-        target_link_libraries(graber  octomap tinyxml2 octomath octovis boost_system  ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${OpenCV_LIBS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+        target_link_libraries(graber octomap tinyxml2 octomath octovis boost_system  ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${OpenCV_LIBS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+        add_executable(mnozenie mnozenie.cpp)
+        target_link_libraries(mnozenie octomap tinyxml2 octomath octovis boost_system  ${PCL_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${OpenCV_LIBS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
         add_executable(depth2pcd depth2pcd.cpp)
-        target_link_libraries(depth2pcd  octomap tinyxml2 octomath octovis boost_system  ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${OpenCV_LIBS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+        target_link_libraries(depth2pcd  octomap tinyxml2 octomath octovis boost_system ${PCL_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${OpenCV_LIBS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 
 

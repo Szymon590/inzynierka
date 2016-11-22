@@ -154,14 +154,16 @@ int main (int argc, char** argv)
         {0,0,0}};
     mnozenie3x3(X,Y,XY);
     mnozenie3x3(XY,Z,XYZ);
+
     double PA[4][4] = {
-      {  XYZ[0][0],   XYZ[0][1],   XYZ[0][2],   tx},
-      {  XYZ[1][0],   XYZ[1][1],   XYZ[1][2],   ty},
-      {  XYZ[2][0],   XYZ[2][1],   XYZ[2][2],   tz},
-      {  0,   0,   0,   1}};
-    double PA1[4][4] = {
-      { 1,   0,   0,   0},
-      {  0,   1,   0,   0},
+        {  XYZ[0][0],   XYZ[0][1],   XYZ[0][2],   tx},
+        {  XYZ[1][0],   XYZ[1][1],   XYZ[1][2],   ty},
+        {  XYZ[2][0],   XYZ[2][1],   XYZ[2][2],   tz},
+        {  0,   0,   0,   1}};
+
+      double PA1[4][4] = {
+        { 1,   0,   0,   0},
+        {  0,   1,   0,   0},
       {  0,   0,   1,   0},
       {  0,   0,   0,   1}};
 

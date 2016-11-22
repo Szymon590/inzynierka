@@ -177,8 +177,15 @@ int main (int argc, char** argv)
  //printf ("Method #1: using a Matrix4f\n");
   //std::cout << transform_1 << std::endl;
 
+/*
+  double kx = -M_PI/4;
+  double ky = M_PI/3.2;
+  double kz = M_PI/2;
 
-
+  double tx = -2;
+  double ty = -1.15;
+  double tz = 1.15;
+*/
 
 
 
@@ -187,13 +194,13 @@ int main (int argc, char** argv)
   double point1[4];
   double point2[4];
 
-  double kx = -M_PI/4;
-  double ky = M_PI/3.2;
-  double kz = M_PI/2;
+  double kx = 0.1;
+  double ky = 0.1;
+  double kz = 0.5;
 
-  double tx = -2;
-  double ty = -1.15;
-  double tz = 1.15;
+  double tx = 0.1;
+  double ty = 0.2;
+  double tz = 0;
 
   double X[3][3] ={
       {1,0,0},
@@ -335,7 +342,7 @@ int main (int argc, char** argv)
   //viewer.setPosition(800, 400); // Setting visualiser window position
 
 
-          string olp = "nowy_24.pcd";
+          string olp = "nowy_24p.pcd";
           ofstream f(olp.c_str(), ofstream::out);
           f << "# .PCD v0.7" << endl
             << "VERSION 0.7" << endl

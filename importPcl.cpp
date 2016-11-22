@@ -13,6 +13,12 @@
 #include <cstdlib>
 #include <cassert>
 
+#include <Eigen/Geometry>
+#include <Eigen/Dense>
+
+using namespace Eigen;
+
+
 using namespace std;
 using namespace octomap;
 
@@ -39,6 +45,15 @@ void mnozeniemac(double A[4][4], double B[4][1], double C[4][1]) {
         C[i][j] = C[i][j] + A[i][k] * B[k][j];
 
  // return 0;
+}
+void print4x4Matrix (double matrix[4][4])
+{
+  printf ("Rotation matrix :\n");
+  printf ("    | %6.3f %6.3f %6.3f | \n", matrix[0][0], matrix[0][1], matrix[0][2]);
+  printf ("R = | %6.3f %6.3f %6.3f | \n", matrix[1][0], matrix[1][1], matrix[1][2]);
+  printf ("    | %6.3f %6.3f %6.3f | \n", matrix[2][0], matrix[2][1], matrix[2][2]);
+  printf ("Translation vector :\n");
+  printf ("t = < %6.3f, %6.3f, %6.3f >\n\n", matrix[0][3], matrix[1,3], matrix[2][3]);
 }
 
 void mnozenie3x3(double A[3][3], double B[3][3], double C[3][3]) {
@@ -157,9 +172,16 @@ int main (int argc, char** argv)
         {1}};
 
 
+    print4x4Matrix(PA);
 
-
-
+    Vector3d a1(cloud_b.points[50001].x,cloud_b.points[50001].y,cloud_b.points[50001].z);
+    Vector3d a2(cloud_b.points[100001].x,cloud_b.points[100001].y,cloud_b.points[100001].z);
+    Vector3d a3(cloud_b.points[150001].x,cloud_b.points[150001].y,cloud_b.points[150001].z);
+    Vector3d a4(cloud_b.points[200001].x,cloud_b.points[200001].y,cloud_b.points[200001].z);
+    Vector3d a5(cloud_b.points[75001].x,cloud_b.points[75001].y,cloud_b.points[75001].z);
+    Vector3d a6(cloud_b.points[125001].x,cloud_b.points[125001].y,cloud_b.points[125001].z);
+    Vector3d a7(cloud_b.points[175001].x,cloud_b.points[175001].y,cloud_b.points[175001].z);
+    Vector3d a8(cloud_b.points[250001].x,cloud_b.points[250001].y,cloud_b.points[250001].z);
 
     for(int i=0;i<cloud_b.size();i++)
     {
@@ -174,7 +196,8 @@ int main (int argc, char** argv)
         /* Mnozenie macierzy A * B = C */
         mnozeniemac(PA, P2, P1);
 
-       cout<<cloud_b.points[i].x<<"   "<<cloud_b.points[i].y<<"   "<<cloud_b.points[i].z<<endl;
+        if(i % 50000 == 1){
+       cout<<cloud_b.points[i].x<<"   "<<cloud_b.points[i].y<<"   "<<cloud_b.points[i].z<<endl;}
 
         // no i przypisujeme
 
@@ -189,15 +212,68 @@ int main (int argc, char** argv)
         cloud_b.points[i].y = P1[1][0];
         cloud_b.points[i].z = P1[2][0];
 
-        cout<<cloud_b.points[i].x<<"   "<<cloud_b.points[i].y<<"   "<<cloud_b.points[i].z<<endl<<endl;
+
+        if(i % 50000 == 1)
+        {cout<<cloud_b.points[i].x<<"   "<<cloud_b.points[i].y<<"   "<<cloud_b.points[i].z<<endl<<endl;}
 
        // P1 = PA * [cloud_b.points[i].x , cloud_b.points[i].y , cloud_b.points[i].z , 1 ];
     }
     
     
     
-    cout<<"1\n";
-    if (strcmp(argv[1], "-p") == 0)
+    cout<<"size : "<< cloud_b.size() <<endl;
+    
+    
+
+    Vector3d b1(cloud_b.points[50001].x,cloud_b.points[50001].y,cloud_b.points[50001].z);
+    Vector3d b2(cloud_b.points[100001].x,cloud_b.points[100001].y,cloud_b.points[100001].z);
+    Vector3d b3(cloud_b.points[150001].x,cloud_b.points[150001].y,cloud_b.points[150001].z);
+    Vector3d b4(cloud_b.points[200001].x,cloud_b.points[200001].y,cloud_b.points[200001].z);
+    Vector3d b5(cloud_b.points[75001].x,cloud_b.points[75001].y,cloud_b.points[75001].z);
+    Vector3d b6(cloud_b.points[125001].x,cloud_b.points[125001].y,cloud_b.points[125001].z);
+    Vector3d b7(cloud_b.points[175001].x,cloud_b.points[175001].y,cloud_b.points[175001].z);
+    Vector3d b8(cloud_b.points[250001].x,cloud_b.points[250001].y,cloud_b.points[250001].z);
+
+    Matrix<double,3,8> start,end;
+    start.col(0)=a1;
+    start.col(1)=a2;
+    start.col(2)=a3;
+    start.col(3)=a4;
+    start.col(4)=a5;
+    start.col(5)=a6;
+    start.col(6)=a7;
+    start.col(7)=a8;
+
+
+    end.col(0)=b1;
+    end.col(1)=b2;
+    end.col(2)=b3;
+    end.col(3)=b4;
+    end.col(4)=b5;
+    end.col(5)=b6;
+    end.col(6)=b7;
+    end.col(7)=b8;
+
+    cout << Eigen::umeyama(start,end,true) << endl;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    return 0;
+  /*  if (strcmp(argv[1], "-p") == 0)
     {
       cloud_c  = cloud_a;
       cloud_c += cloud_b;
@@ -226,5 +302,5 @@ int main (int argc, char** argv)
 
       ///--------------------------------------------
 
-
+*/
 }

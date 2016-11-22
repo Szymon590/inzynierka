@@ -24,7 +24,8 @@
 #include <stdlib.h>
  #include <pcl/visualization/cloud_viewer.h>
 
-
+#include <pcl/common/io.h>
+#include <pcl/features/normal_3d.h>
 #include <pcl/registration/icp.h>
 #include <pcl/console/time.h>   // TicToc
 #include <pcl/registration/gicp.h>   //Generalized Iterative Closest Point
@@ -34,15 +35,23 @@
 using namespace std;
 using namespace octomap;
 using namespace pcl;
+
 typedef pcl::PointXYZINormal PointT;   //Iterative Closest Point With Normals
 typedef pcl::PointCloud<PointT> PointCloudT;
-typedef pcl::IterativeClosestPointWithNormals<PointT, PointT> icp_normal;
+//typedef pcl::IterativeClosestPointWithNormals<PointT, PointT> icp_normal;
 
-typedef pcl::PointXYZINormal PointXYZ;
-typedef pcl::IterativeClosestPoint<PointT,PointT> icp_default;
+
+//te 5 typół, joint potrzebuje 2 chmur jakos a normal estymacji zmiennych
+typedef pcl::IterativeClosestPoint<pcl::PointXYZ,pcl::PointXYZ> icp_default;
 typedef pcl::GeneralizedIterativeClosestPoint<pcl::PointXYZ,pcl::PointXYZ> icp_general;
+typedef pcl::IterativeClosestPointWithNormals<pcl::PointXYZ,pcl::PointXYZ> icp_normal;
+typedef pcl::IterativeClosestPointNonLinear<pcl::PointXYZ,pcl::PointXYZ> icp_nonlin;
+typedef pcl::JointIterativeClosestPoint<pcl::PointXYZ,pcl::PointXYZ>icp_joint;
+
+
 typedef pcl::GeneralizedIterativeClosestPoint<PointT,PointT> icp_generalT;
-//typedef pcl::IterativeClosestPointWithNormals<pcl::PointXYZ,pcl::PointXYZ> icp_normal;
+
+
 
 //global variables
 long int timeCnt;
@@ -74,24 +83,29 @@ int main (int argc, char** argv)
 {
 
 
-  //pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_23 (new pcl::PointCloud<pcl::PointXYZ>); // PTR
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_23 (new pcl::PointCloud<pcl::PointXYZ>); // PTR
   pcl::PCLPointCloud2 *cloud2_23 = new pcl::PCLPointCloud2;
 
- //pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_24 (new pcl::PointCloud<pcl::PointXYZ>); // PTR
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_24 (new pcl::PointCloud<pcl::PointXYZ>); // PTR
   pcl::PCLPointCloud2 *cloud2_24 = new pcl::PCLPointCloud2;
 
- // pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_tr (new pcl::PointCloud<pcl::PointXYZ>); // PTR
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_tr (new pcl::PointCloud<pcl::PointXYZ>); // PTR
 
-  PointCloudT::Ptr cloud_23T (new PointCloudT); // PTR
-
-  PointCloudT::Ptr cloud_24T (new PointCloudT); // PTR
-
-  PointCloudT::Ptr cloud_trT (new PointCloudT); // PTR
+ // pcl::PointCloud<pcl::Normal>::Ptr cloud_Normals (new pcl::PointCloud<pcl::Normal>);
+  //pcl::PointCloud<pcl::PointXYZINormal>::Ptr cloudwNormals (new pcl::PointCloud<pcl::PointXYZINormal>);
 
 
+ // PointCloudT::Ptr cloud_23T (new PointCloudT); // PTR
 
-  string infilename23 = "/home/szymon/Pulpit/Inż/Zdjęcia/Trasa 4/cloud00023.pcd";
-  string infilename24 = "nowy_24.pcd";
+ //  PointCloudT::Ptr cloud_24T (new PointCloudT); // PTR
+
+ // PointCloudT::Ptr cloud_trT (new PointCloudT); // PTR
+
+
+
+  string infilename23 = "/home/szymon/Pulpit/Inż/Zdjęcia/trasa3/cloud00007.pcd";
+  string infilename24 = "/home/szymon/Pulpit/Inż/Zdjęcia/trasa3/cloud00008.pcd";
+   // string infilename24 = "/home/szymon/Pulpit/Inż/Zdjęcia/Trasa 4/cloud00024.pcd";
 
   pcl::console::TicToc time; // nie do końca ogarniam co on robi :/
   time.tic ();               // taka wymuszona pauza ??
@@ -107,17 +121,44 @@ int main (int argc, char** argv)
       return -1;
     }
 
-   // pcl::fromPCLPointCloud2 (*cloud2_23,*cloud_23);
-    //pcl::fromPCLPointCloud2 (*cloud2_24,*cloud_24);
+    pcl::fromPCLPointCloud2 (*cloud2_23,*cloud_23);
+    pcl::fromPCLPointCloud2 (*cloud2_24,*cloud_24);
 
-   pcl::fromPCLPointCloud2 (*cloud2_23,*cloud_23T);
-   pcl::fromPCLPointCloud2 (*cloud2_24,*cloud_24T);
+ //  pcl::fromPCLPointCloud2 (*cloud2_23,*cloud_23T);
+  // pcl::fromPCLPointCloud2 (*cloud2_24,*cloud_24T);
 
-  int iterations = 10;
+  int iterations = 1000;
 
   // Executing the transformation*cloud_tr = *cloud_in_2;  // We backup cloud_icp into cloud_tr for later use
   //*cloud_tr = *cloud_24;  // We backup cloud_icp into cloud_tr for later use
-  *cloud_trT = *cloud_24T;  // We backup cloud_icp into cloud_tr for later use
+  *cloud_tr = *cloud_24;  // We backup cloud_icp into cloud_tr for later use
+
+/*
+
+
+  // Create the normal estimation class, and pass the input dataset to it
+  pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
+  ne.setInputCloud (cloud_24);
+
+  // Create an empty kdtree representation, and pass it to the normal estimation object.
+  // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
+  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
+  ne.setSearchMethod (tree);
+
+  // Use all neighbors in a sphere of radius 3cm
+  ne.setRadiusSearch (0.03);
+
+  // Compute the features
+  ne.compute (*cloud_Normals);
+
+  //iterate through XYZ cloudInput and copy it to cloudOutput
+  copyPointCloud(*cloud_24, *cloudwNormals);
+
+  //iterate through Normals cloudNormals and copy it to cloudOutput
+  copyPointCloud(*cloud_Normals, *cloudwNormals);
+*/
+
+
 
 
   // The Iterative Closest Point algorithm
@@ -127,13 +168,13 @@ int main (int argc, char** argv)
     icp_default* ptr;
    // ptr = new icp_generalT(); // korzystamy gicp narazie
 
-    ptr = new icp_generalT();
+    ptr = new icp_default();
 
     ptr->setMaximumIterations (iterations);
     ptr->setRANSACOutlierRejectionThreshold(0.5);//zasieg szukania ?
-    ptr->setInputSource (cloud_24T);
-    ptr->setInputTarget (cloud_23T);
-    ptr->align (*cloud_24T);
+    ptr->setInputSource (cloud_24);
+    ptr->setInputTarget (cloud_23);
+    ptr->align (*cloud_24);
     ptr->setMaximumIterations (1);  // We set this variable to 1 for the next time we will call .align () function
     timeCnt = time.toc ();
 
@@ -179,16 +220,16 @@ int main (int argc, char** argv)
   float txt_gray_lvl = 1.0 - bckgr_gray_level;
 
 
- // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler1 (cloud_23, 0, 0, 255);
- // viewer1.addPointCloud (cloud_23, source_cloud_color_handler1, "v1");
- // viewer1.addPointCloud (cloud_23, source_cloud_color_handler1, "v2");
+  pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler1 (cloud_23, 0, 0, 255);
+  viewer1.addPointCloud (cloud_23, source_cloud_color_handler1, "v1");
+  viewer1.addPointCloud (cloud_23, source_cloud_color_handler1, "v2");
 
- // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler2 (cloud_24, 255, 0, 0);
-//  viewer1.addPointCloud (cloud_24, source_cloud_color_handler2, "v3");
+  pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler2 (cloud_24, 255, 0, 0);
+  viewer1.addPointCloud (cloud_24, source_cloud_color_handler2, "v3");
 
- // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler3 (cloud_tr, 0, 255, 0);
- // viewer1.addPointCloud (cloud_tr, source_cloud_color_handler3, "v4");
-
+  pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler3 (cloud_tr, 0, 255, 0);
+  viewer1.addPointCloud (cloud_tr, source_cloud_color_handler3, "v4");
+/*
   pcl::visualization::PointCloudColorHandlerCustom<PointT> source_cloud_color_handler1 (cloud_23T, 0, 0, 255);
   viewer1.addPointCloud (cloud_23T, source_cloud_color_handler1, "v1");
   viewer1.addPointCloud (cloud_23T, source_cloud_color_handler1, "v2");
@@ -198,7 +239,7 @@ int main (int argc, char** argv)
 
   pcl::visualization::PointCloudColorHandlerCustom<PointT> source_cloud_color_handler3 (cloud_trT, 0, 255, 0);
   viewer1.addPointCloud (cloud_trT, source_cloud_color_handler3, "v4");
-
+*/
 
 
   viewer1.addCoordinateSystem (1.0, "cloud", 0);
@@ -223,10 +264,11 @@ int main (int argc, char** argv)
       // The user pressed "space" :
       if (next_iteration)
       {
-
+        for(int i=0;i<10;i++)
+        {
         // The Iterative Closest Point algorithm
         time.tic ();
-        ptr->align (*cloud_24T);
+        ptr->align (*cloud_24);
         time.toc ();
         timeCnt += time.toc();
 
@@ -243,22 +285,23 @@ int main (int argc, char** argv)
           std::cout << "ICP has converged, score is " << ptr->getFitnessScore () << std::endl;
           std::cout << "----------------------------------------------------" << std::endl;
           std::cout << "ICP transformation " << ++iterations << " : cloud_in_1 -> cloud_in_2" << std::endl;
-          //transformation_matrix *= ptr->getFinalTransformation().cast<double>();  // WARNING /!\ This is not accurate! For "educational" purpose only!
-          //print4x4Matrix (transformation_matrix);  // Print the transformation between original pose and current pose
+          transformation_matrix *= ptr->getFinalTransformation().cast<double>();  // WARNING /!\ This is not accurate! For "educational" purpose only!
+          print4x4Matrix (transformation_matrix);  // Print the transformation between original pose and current pose
 
           //ss.str ("");
           //ss << iterations;
           //std::string iterations_cnt = "ICP iterations = " + ss.str ();
 
-          viewer1.updatePointCloud (cloud_24T, source_cloud_color_handler2, "v3");
+          viewer1.updatePointCloud (cloud_24, source_cloud_color_handler2, "v3");
           //viewer1.removePointCloud(cloud_24,"v3");
         }
+
         else
         {
           PCL_ERROR ("\nICP has not converged.\n");
           return (-1);
         }
-      }
+      }}
       next_iteration = false;
     }
 

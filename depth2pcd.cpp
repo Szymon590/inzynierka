@@ -45,23 +45,25 @@ int main(int argc, char * argv[])
             std::cout << "No input file specified (-i fileneme)\n";
             return 0;
         }*/
-        std::string inputFile = "/home/szymon/Pulpit/Programik/dzialania wojenne/depth_00043.png";
-        std::string outputFile = "nowynowy.pcd";
-        Mat img;
+        std::string inputFile = "/home/szymon/Pulpit/Programik/dzialania wojenne/depth_00045.png";
+        std::string inputFile1 = "/home/szymon/Pulpit/Programik/dzialania wojenne/rgb_00045.png";
+        std::string outputFile = "nowynowy66.pcd";
+        Mat img,img1;
 
        // tinyxml2::XMLDocument config;
         //config.LoadFile("KinectModel.xml");
 
 
         img = cv::imread(inputFile, CV_LOAD_IMAGE_ANYDEPTH );; // wczytywanie zdjecia depth
+        img1 = cv::imread(inputFile1);
 
         AsusGrabber::UncertaintyModel asusModel("../resources/KinectModel.xml");
 
-        PointCloud outCloud = asusModel.depth2cloud(img); // zapisywanie zdjecia depth do pcd
+        PointCloud outCloud = asusModel.depth2cloudcolor(img,img1); // zapisywanie zdjecia depth do pcd
 
-        cout<<endl<<outCloud.points[5].x<<" "<<outCloud.points[5].y<<" "<<outCloud.points[5].z<<endl;
-        cout<<endl<<outCloud.points[1115].x<<" "<<outCloud.points[1115].y<<" "<<outCloud.points[1115].z<<endl;
-        cout<<endl<<outCloud.points[11115].x<<" "<<outCloud.points[11115].y<<" "<<outCloud.points[11115].z<<endl;
+     //   cout<<endl<<outCloud.points[5].x<<" "<<outCloud.points[5].y<<" "<<outCloud.points[5].z<<endl;
+     //   cout<<endl<<outCloud.points[1115].x<<" "<<outCloud.points[1115].y<<" "<<outCloud.points[1115].z<<endl;
+       // cout<<endl<<outCloud.points[11115].x<<" "<<outCloud.points[11115].y<<" "<<outCloud.points[11115].z<<endl;
 
       //  if (config.ErrorID())
        //     std::cout << "unable to load Kinect config file.\n";

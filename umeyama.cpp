@@ -45,5 +45,15 @@ int main (int argc, char** argv)
 
     cout << Eigen::umeyama(start,end,true) << endl;
 
+    for(int i =0;i<8;i++)
+    {
+    string dd ;
+    stringstream ss;
+    ss << i;
+    ss >> dd;
+    string sd = "cos " + dd;
+    cout << sd<<endl;
+    }
+
   return (0);
 }

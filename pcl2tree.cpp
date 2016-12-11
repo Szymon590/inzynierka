@@ -52,7 +52,7 @@ int main(int argc, char** argv){
     pcl::PointCloud<pcl::PointXYZ> *cloud (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PCLPointCloud2 *cloud2 = new pcl::PCLPointCloud2;
 
-    string infilename = "/home/szymon/Pulpit/Inż/Zdjęcia/Trasa 4/cloud00024.pcd";
+    string infilename = "osZ.pcd";
     string outfilename = "nowy.bt";
 
     if(pcl::io::loadPCDFile(infilename, *cloud2) == -1) //load the file
@@ -67,7 +67,7 @@ int main(int argc, char** argv){
 
     cout<<"tworzenie octree\n";
 
-    OcTree tree(0.001); //nie do konca czaje tą rozdzielczosc, im mniejsza tym wiecej nodów ale co to xd
+    OcTree tree(0.005); //nie do konca czaje tą rozdzielczosc, im mniejsza tym wiecej nodów ale co to xd
 
     for(int i=0;i<cloud->size();i++)
     {

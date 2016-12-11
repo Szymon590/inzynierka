@@ -53,7 +53,7 @@ void print4x4Matrix (double matrix[4][4])
   printf ("R = | %6.3f %6.3f %6.3f | \n", matrix[1][0], matrix[1][1], matrix[1][2]);
   printf ("    | %6.3f %6.3f %6.3f | \n", matrix[2][0], matrix[2][1], matrix[2][2]);
   printf ("Translation vector :\n");
-  printf ("t = < %6.3f, %6.3f, %6.3f >\n\n", matrix[0][3], matrix[1,3], matrix[2][3]);
+  printf ("t = < %6.3f, %6.3f, %6.3f >\n\n", matrix[0][3], matrix[1][3], matrix[2][3]);
 }
 
 void mnozenie3x3(double A[3][3], double B[3][3], double C[3][3]) {
@@ -123,8 +123,8 @@ int main (int argc, char** argv)
     double point2[4];
 
     double kx = -M_PI/6;
-    double ky = M_PI/6;
-    double kz = M_PI/2;
+    double ky = 0;
+    double kz = 0;
 
     double tx = -0.6;
     double ty = -0.45;
@@ -236,25 +236,25 @@ int main (int argc, char** argv)
     Vector3d b7(cloud_b.points[175001].x,cloud_b.points[175001].y,cloud_b.points[175001].z);
     Vector3d b8(cloud_b.points[250001].x,cloud_b.points[250001].y,cloud_b.points[250001].z);
 
-    Matrix<double,3,8> start,end;
+    Matrix<double,3,4> start,end;
     start.col(0)=a1;
     start.col(1)=a2;
     start.col(2)=a3;
     start.col(3)=a4;
-    start.col(4)=a5;
+   /* start.col(4)=a5;
     start.col(5)=a6;
     start.col(6)=a7;
-    start.col(7)=a8;
+    start.col(7)=a8;*/
 
 
     end.col(0)=b1;
     end.col(1)=b2;
     end.col(2)=b3;
     end.col(3)=b4;
-    end.col(4)=b5;
+   /* end.col(4)=b5;
     end.col(5)=b6;
     end.col(6)=b7;
-    end.col(7)=b8;
+    end.col(7)=b8;*/
 
     cout << Eigen::umeyama(start,end,true) << endl;
     

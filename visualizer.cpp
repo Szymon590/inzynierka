@@ -111,8 +111,8 @@ int main (int argc, char** argv)
 
 
 
-  string infilename23 = "/home/szymon/Pulpit/Inż/Zdjęcia/Trasa 4/cloud00023.pcd";
-  string infilename24 = "/home/szymon/Pulpit/Inż/Zdjęcia/Trasa 4/cloud00024.pcd";
+  string infilename23 = "/home/szymon/Pulpit/trasy/trasa1_v2/dwa.pcd";
+  string infilename24 = "/home/szymon/Pulpit/trasy/trasa1_v2/dwa.pcd";
 
 
      if(pcl::io::loadPCDFile(infilename23, *cloud2_23) == -1) //load the file
@@ -194,12 +194,12 @@ int main (int argc, char** argv)
   double point1[4];
   double point2[4];
 
-  double kx = 0.1;
-  double ky = 0.1;
-  double kz = 0.5;
+  double kx = -0.5 * M_PI;
+  double ky = 0 * M_PI;
+  double kz = 0;
 
-  double tx = 0.1;
-  double ty = 0.2;
+  double tx = 0;
+  double ty = 0;
   double tz = 0;
 
   double X[3][3] ={
@@ -311,8 +311,8 @@ int main (int argc, char** argv)
   //viewer.addPointCloud (cloud, source_cloud_color_handler, "original_cloud");
 
 
-  pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler1 (cloud_23, 0, 0, 255);
-  viewer1.addPointCloud (cloud_23, source_cloud_color_handler1, "original_cloud1");
+ // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler1 (cloud_23, 0, 0, 255);
+ // viewer1.addPointCloud (cloud_23, source_cloud_color_handler1, "original_cloud1");
 
   pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler2 (cloud_24, 255, 0, 0);
   viewer1.addPointCloud (cloud_24, source_cloud_color_handler2, "original_cloud2");
@@ -342,7 +342,7 @@ int main (int argc, char** argv)
   //viewer.setPosition(800, 400); // Setting visualiser window position
 
 
-          string olp = "nowy_24p.pcd";
+          string olp = "osZ.pcd";
           ofstream f(olp.c_str(), ofstream::out);
           f << "# .PCD v0.7" << endl
             << "VERSION 0.7" << endl

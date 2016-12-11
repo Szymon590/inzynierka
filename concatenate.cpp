@@ -16,69 +16,68 @@ using namespace octomap;
 
 int main (int argc, char** argv)
 {
-  if (argc != 2)
-  {
-    std::cerr << "please specify command line arg '-f' or '-p'" << std::endl;
-    exit(0);
-  }
- pcl::PointCloud<pcl::PointXYZ> cloud_a, cloud_b, cloud_c;
-  pcl::PointCloud<pcl::Normal> n_cloud_b;
-  pcl::PointCloud<pcl::PointNormal> p_n_cloud_c;
 
-  //pcl::PointCloud<pcl::PointXYZ> *cloud_a (new pcl::PointCloud<pcl::PointXYZ>);
- // pcl::PointCloud<pcl::PointXYZ> *cloud_b (new pcl::PointCloud<pcl::PointXYZ>);
- // pcl::PointCloud<pcl::PointXYZ> *cloud_c (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud_ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PCLPointCloud2 *cloud_color = new pcl::PCLPointCloud2;
+    pcl::PCLPointCloud2 *cloud_basic = new pcl::PCLPointCloud2;
 
 
-  // Fill in the cloud data
-  cloud_a.width  = 5;
-  cloud_a.height = cloud_b.height = n_cloud_b.height = 1;
-    cloud_a.points.resize (cloud_a.width * cloud_a.height);
-  if (strcmp(argv[1], "-p") == 0)
-  {
-    cloud_b.width  = 3;
-    cloud_b.points.resize (cloud_b.width * cloud_b.height);
-  }
-  else{
-    n_cloud_b.width = 5;
-    n_cloud_b.points.resize (n_cloud_b.width * n_cloud_b.height);
-  }
+    string infilename23 = "/home/szymon/Pulpit/Inż/Zdjęcia/trasa3/cloud00007.pcd";
+    string infilename24 = "/home/szymon/Pulpit/Inż/Zdjęcia/trasa3/cloud00008.pcd";
 
-  for (size_t i = 0; i < cloud_a.points.size (); ++i)
-  {
-    cloud_a.points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
-    cloud_a.points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
-    cloud_a.points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
-  }
-  if (strcmp(argv[1], "-p") == 0)
-    for (size_t i = 0; i < cloud_b.points.size (); ++i)
-    {
-      cloud_b.points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
-      cloud_b.points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
-      cloud_b.points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
-    }
-  else
-    for (size_t i = 0; i < n_cloud_b.points.size (); ++i)
-    {
-      n_cloud_b.points[i].normal[0] = 1024 * rand () / (RAND_MAX + 1.0f);
-      n_cloud_b.points[i].normal[1] = 1024 * rand () / (RAND_MAX + 1.0f);
-      n_cloud_b.points[i].normal[2] = 1024 * rand () / (RAND_MAX + 1.0f);
-    }
-  std::cerr << "Cloud A: " << std::endl;
-  for (size_t i = 0; i < cloud_a.points.size (); ++i)
-    std::cerr << "    " << cloud_a.points[i].x << " " << cloud_a.points[i].y << " " << cloud_a.points[i].z << std::endl;
+     // string infilename24 = "/home/szymon/Pulpit/Inż/Zdjęcia/Trasa 4/cloud00024.pcd";
 
-  std::cerr << "Cloud B: " << std::endl;
-  if (strcmp(argv[1], "-p") == 0)
-    for (size_t i = 0; i < cloud_b.points.size (); ++i)
-      std::cerr << "    " << cloud_b.points[i].x << " " << cloud_b.points[i].y << " " << cloud_b.points[i].z << std::endl;
-  else
-    for (size_t i = 0; i < n_cloud_b.points.size (); ++i)
-      std::cerr << "    " << n_cloud_b.points[i].normal[0] << " " << n_cloud_b.points[i].normal[1] << " " << n_cloud_b.points[i].normal[2] << std::endl;
+\
+
+       if(pcl::io::loadPCDFile(infilename23, *cloud_basic) == -1) //load the file
+      {
+        std::cout << "Error loading point cloud 23" << std::endl << std::endl;
+        return -1;
+      }
+       if(pcl::io::loadPCDFile(infilename24, *cloud_color) == -1) //load the file
+      {
+        std::cout << "Error loading point cloud 24" << std::endl << std::endl;
+        return -1;
+      }
+
+      pcl::fromPCLPointCloud2 (*cloud_basic,*basic_cloud_ptr);
+      pcl::fromPCLPointCloud2 (*cloud_color,*point_cloud_ptr);
+
+      // Visualization
+      printf(  "\nPoint cloud colors :  white  = original point cloud\n"
+          "                        red  = transformed point cloud\n");
+     // pcl::visualization::PCLVisualizer viewer1 ("Matrix transformation example");
+     // pcl::visualization::PCLVisualizer viewer2 ("Matrix transformation example");
+
+
+       // Define R,G,B colors for the point cloud
+      //pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler (cloud, 255.0, 255.0, 255.0);
+      // We add the point cloud to the viewer and pass the color handler
+      //viewer.addPointCloud (cloud, source_cloud_color_handler, "original_cloud");
+
+
+     // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler1 (cloud_23, 0, 0, 255);
+     // viewer1.addPointCloud (cloud_23, source_cloud_color_handler1, "original_cloud1");
+
+    //  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(point_cloud_ptr);
+ //     viewer1.addPointCloud (basic_cloud_ptr, rgb, "original_cloud2");
+
+      //pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> transformed_cloud_color_handler (transformed_cloud, 230, 20, 20); // Red
+      //viewer.addPointCloud (transformed_cloud, transformed_cloud_color_handler, "transformed_cloud");
+
+     // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> source_cloud_color_handler3 (cloud_24, 255, 0, 0);
+    //  viewer2.addPointCloud (cloud_24, source_cloud_color_handler3, "original_cloud2");
+
+    //  viewer1.addCoordinateSystem (1.0, "cloud", 0);
+     // viewer1.setBackgroundColor(0.05, 0.05, 0.05, 0); // Setting background to a dark grey
+    ////  viewer1.setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 2, "original_cloud");
+
+
 
   ///ZAPISYWANIE DO PCD
-/*
-          string olp1 = "cloudA.pcd";
+
+          string olp1 = "clou.pcd";
           ofstream f(olp1.c_str(), ofstream::out);
           f << "# .PCD v0.7" << endl
             << "VERSION 0.7" << endl
@@ -86,81 +85,18 @@ int main (int argc, char** argv)
             << "SIZE 4 4 4" << endl
             << "TYPE F F F" << endl
             << "COUNT 1 1 1" << endl
-            << "WIDTH " << cloud_a.size() << endl
+            << "WIDTH " << point_cloud_ptr->size() << endl
             << "HEIGHT 1" << endl
             << "VIEWPOINT 0 0 0 0 0 0 1" << endl
-            << "POINTS " << cloud_a.size() << endl
+            << "POINTS " << point_cloud_ptr->size() << endl
             << "DATA ascii" << endl;
-          for (size_t i = 0; i < cloud_a.size(); i++)
-              f << cloud_a.points[i].x << " " << cloud_a.points[i].y  << " " << cloud_a.points[i].z  << endl;
+          for (size_t i = 0; i < point_cloud_ptr->size(); i++)
+              f << point_cloud_ptr->points[i].x << " " << point_cloud_ptr->points[i].y  << " " << point_cloud_ptr->points[i].z  << endl;
           f.close();
 
   ///--------------------------------------------
 
-          ///ZAPISYWANIE DO PCD
 
-                  string olp2 = "cloudB.pcd";
-                  ofstream f1(olp2.c_str(), ofstream::out);
-                  f1 << "# .PCD v0.7" << endl
-                    << "VERSION 0.7" << endl
-                    << "FIELDS x y z" << endl
-                    << "SIZE 4 4 4" << endl
-                    << "TYPE F F F" << endl
-                    << "COUNT 1 1 1" << endl
-                    << "WIDTH " << cloud_b.size() << endl
-                    << "HEIGHT 1" << endl
-                    << "VIEWPOINT 0 0 0 0 0 0 1" << endl
-                    << "POINTS " << cloud_b.size() << endl
-                    << "DATA ascii" << endl;
-                  for (size_t i = 0; i < cloud_b.size(); i++)
-                      f1 << cloud_b.points[i].x << " " << cloud_b.points[i].y  << " " << cloud_b.points[i].z  << endl;
-                  f1.close();
-
-          ///--------------------------------------------
-*/
-
-
-
-
-  // Copy the point cloud data
-  if (strcmp(argv[1], "-p") == 0)
-  {
-    cloud_c  = cloud_a;
-    cloud_c += cloud_b;
-    std::cerr << "Cloud C: " << std::endl;
-    for (size_t i = 0; i < cloud_c.points.size (); ++i)
-      std::cerr << "    " << cloud_c.points[i].x << " " << cloud_c.points[i].y << " " << cloud_c.points[i].z << " " << std::endl;
-  }
-  else
-  {
-    pcl::concatenateFields (cloud_a, n_cloud_b, p_n_cloud_c);
-    std::cerr << "Cloud C: " << std::endl;
-    for (size_t i = 0; i < p_n_cloud_c.points.size (); ++i)
-      std::cerr << "    " <<
-        p_n_cloud_c.points[i].x << " " << p_n_cloud_c.points[i].y << " " << p_n_cloud_c.points[i].z << " " <<
-        p_n_cloud_c.points[i].normal[0] << " " << p_n_cloud_c.points[i].normal[1] << " " << p_n_cloud_c.points[i].normal[2] << std::endl;
-  }
-  ///ZAPISYWANIE DO PCD
-/*
-          string olp3 = "cloudC.pcd";
-          ofstream f2(olp3.c_str(), ofstream::out);
-          f2 << "# .PCD v0.7" << endl
-            << "VERSION 0.7" << endl
-            << "FIELDS x y z" << endl
-            << "SIZE 4 4 4" << endl
-            << "TYPE F F F" << endl
-            << "COUNT 1 1 1" << endl
-            << "WIDTH " << cloud_c.size() << endl
-            << "HEIGHT 1" << endl
-            << "VIEWPOINT 0 0 0 0 0 0 1" << endl
-            << "POINTS " << cloud_c.size() << endl
-            << "DATA ascii" << endl;
-          for (size_t i = 0; i < cloud_c.size(); i++)
-              f2 << cloud_c.points[i].x << " " << cloud_c.points[i].y  << " " << cloud_c.points[i].z  << endl;
-          f2.close();
-
-  ///--------------------------------------------
-*/
 
 
   return (0);

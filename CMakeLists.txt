@@ -111,6 +111,12 @@ endif()
 
         add_executable(depth2pcd depth2pcd.cpp)
         target_link_libraries(depth2pcd  octomap tinyxml2 octomath octovis boost_system ${PCL_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${OpenCV_LIBS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+        add_executable(graberStary graberStary.cpp)
+        target_link_libraries(graberStary octomap tinyxml2 octomath octovis boost_system  ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${OpenCV_LIBS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+        add_executable(sum_pcd sum_pcd.cpp)
+        target_link_libraries(sum_pcd octomap tinyxml2 octomath octovis boost_system  ${PCL_COMMON_LIBRARIES} ${PCL_LIBRARIES} ${PCL_IO_LIBRARIES} ${OpenCV_LIBS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+        ADD_EXECUTABLE(rastrowa rastrowa.cpp)
+        TARGET_LINK_LIBRARIES(rastrowa octomap octomath octovis boost_system ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
 
 
 
